@@ -217,19 +217,23 @@ Which dimension would you like to examine? 6
 
 We now get a prompt to enter a dimension. I iterate through them and the one that peaks my interest is option 6 as its now asking for a decryption key. Maybe we can find something if we decompile the binary. Lets open IDA Pro.
 
-![[wide-1.png]]
-![[wide-2.png]]
-![[wide-3.png]]
+![wide-1.png](https://github.com/kebab01/HTB-Write-Ups/blob/main/images/wide-1.png)
+
+![wide-2.png](https://github.com/kebab01/HTB-Write-Ups/blob/main/images/wide-2.png)
+
+![wide-3.png](https://github.com/kebab01/HTB-Write-Ups/blob/main/images/wide-3.png)
+
 This is clearly where the options are display, we iterate though each option and the counter `var_20` is incremented after every iteration. Once we reach the value in `var_1C`, presumably the number of options available, we jump to another block where a subroutine called `menu` is called.
 
-![[wide-4.png]]
+![wide-4.png](https://github.com/kebab01/HTB-Write-Ups/blob/main/images/wide-4.png)
 Now this is the interesting part of `menu` as we see the same message that we got when we ran the executable `That entry is encrypted - please enter your WIDE decryption key:`. We also see towards the bottom of the block a call to `wcscmp`. I was not familiar with that c call but after a quick google I found it is a function to compare 2 wide strings which are strings with a character size larger than 8 bits. We see that `wcscmp` is comparing the value stored in `s2` to the value stored in the stack variable`pwcs`. Lets see what is stored at the location of `s2`.
 
-![[wide-5.png]]
+![wide-5.png](https://github.com/kebab01/HTB-Write-Ups/blob/main/images/wide-5.png)
 We see the declaration of a wide char with `wchar_t s2` followed by a series of strings. IDA Pro is assuming these are normal size strings but we now know its a wide string. Lets tell IDA its a wide string by clicking on the definition, and click `Option+a`. The following prompt appears.
-![[wide-6.png]]
+![wide-6.png](https://github.com/kebab01/HTB-Write-Ups/blob/main/images/wide-6.png)
 If we deselect the UTF-8 we can select several other character encodings. Lets go with the largest `UTF-32LE`. Now this looks really different.
-![[wide-7.png]]
+
+![wide-7.png](https://github.com/kebab01/HTB-Write-Ups/blob/main/images/wide-7.png)
 Lets paste into the prompt for the encryption key
 ```bash
 Which dimension would you like to examine? 6
